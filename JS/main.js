@@ -192,7 +192,6 @@
   let currentLang = "en";
   let heroTypeTimer = 0;
   let heroTypingPaused = false;
-  let lockedScrollY = 0;
 
   function whatsappHref() {
     if (!WHATSAPP_NUMBER) return FALLBACK_WHATSAPP;
@@ -216,6 +215,70 @@
     });
   }
 
+  function escapeHTML(value) {
+    return value.replace(/[&<>"']/g, (char) => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    })[char]);
+  }
+
+  const productionNoteLineSets = {
+    en: [
+      "Production and event work",
+      "developed as collaborator of PopKraft",
+      "in Amsterdam, covering contexts such as",
+      "IDFA DocLab, NFF and What Design Can Do."
+    ],
+    es: [
+      "Trabajo de producción y eventos",
+      "como colaborador de PopKraft",
+      "en Amsterdam, cubriendo contextos como",
+      "IDFA DocLab, NFF y What Design Can Do."
+    ],
+    nl: [
+      "Productie- en eventwerk",
+      "ontwikkeld als collaborator van PopKraft",
+      "in Amsterdam, met contexten zoals",
+      "IDFA DocLab, NFF en What Design Can Do."
+    ],
+    ca: [
+      "Treball de producció i esdeveniments",
+      "com a col·laborador de PopKraft",
+      "a Amsterdam, cobrint contextos com",
+      "IDFA DocLab, NFF i What Design Can Do."
+    ]
+  };
+
+  function productionNoteLines(lang, text) {
+    if (productionNoteLineSets[lang]) return productionNoteLineSets[lang];
+
+    const clean = text.trim().replace(/\s+/g, " ");
+    const words = clean.split(" ");
+    const lineCount = 4;
+    const target = Math.ceil(words.length / lineCount);
+    const lines = [];
+    for (let i = 0; i < lineCount; i += 1) {
+      const start = i * target;
+      const end = i === lineCount - 1 ? words.length : (i + 1) * target;
+      lines.push(words.slice(start, end).join(" "));
+    }
+    return lines.filter(Boolean);
+  }
+
+  function renderProductionNotes(dict) {
+    $$("[data-i18n-note]").forEach((el) => {
+      const value = dict[el.dataset.i18nNote];
+      if (!value) return;
+      el.setAttribute("aria-label", value);
+      el.innerHTML = productionNoteLines(currentLang, value)
+        .map((line) => `<span>${escapeHTML(line)}</span>`)
+        .join("");
+    });
+  }
+
   function prepareTypedTargets() {
     const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
     $$("[data-type-on-view]").forEach((el) => {
@@ -234,6 +297,7 @@
     currentLang = translations[lang] ? lang : "en";
     const dict = translations[currentLang];
     updateTextContent(dict);
+    renderProductionNotes(dict);
     $("#languageCurrent").textContent = languageNames[currentLang];
     $$("#languageMenu [data-lang]").forEach((button) => {
       button.classList.toggle("is-active", button.dataset.lang === currentLang);
@@ -252,24 +316,8 @@
 
     const setOpen = (open) => {
       menu.classList.toggle("is-open", open);
-      document.body.classList.toggle("menu-open", open);
       menu.setAttribute("aria-hidden", String(!open));
       toggle.setAttribute("aria-expanded", String(open));
-      if (open) {
-        lockedScrollY = window.scrollY;
-        document.body.style.position = "fixed";
-        document.body.style.top = `-${lockedScrollY}px`;
-        document.body.style.left = "0";
-        document.body.style.right = "0";
-        document.body.style.width = "100%";
-      } else {
-        document.body.style.position = "";
-        document.body.style.top = "";
-        document.body.style.left = "";
-        document.body.style.right = "";
-        document.body.style.width = "";
-        window.scrollTo(0, lockedScrollY);
-      }
     };
 
     toggle.addEventListener("click", () => setOpen(!menu.classList.contains("is-open")));
