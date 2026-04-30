@@ -1,0 +1,257 @@
+﻿---
+import "../../styles/main.css";
+import { content, languages, languageOrder, siteUrl, tickerItems } from "../../data/site.js";
+
+export function getStaticPaths() {
+  return languageOrder.map((lang) => ({ params: { lang }, props: { lang } }));
+}
+
+const { lang } = Astro.props;
+const page = content[lang] ?? content.en;
+const canonical = `${siteUrl}/${lang}/`;
+const languageLinks = languageOrder.map((code) => ({
+  code,
+  href: `/${code}/`,
+  absolute: `${siteUrl}/${code}/`,
+  label: languages[code].label,
+  hreflang: languages[code].hreflang
+}));
+const tickerLoop = Array.from({ length: 4 }, () => tickerItems).flat();
+const pageData = {
+  lang,
+  heroManifesto: page.hero.manifesto
+};
+const structuredData = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "third",
+  url: siteUrl,
+  logo: `${siteUrl}/logo.png`,
+  email: "info@3rdproductions.com",
+  description: page.seo.description,
+  areaServed: ["Spain", "Netherlands", "Europe"],
+  inLanguage: languages[lang].hreflang,
+  sameAs: [
+    "https://www.instagram.com/romero.rfl",
+    "https://www.linkedin.com/company/110978956/"
+  ]
+};
+---
+<!doctype html>
+<html lang={languages[lang].hreflang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>{page.seo.title}</title>
+    <meta name="description" content={page.seo.description} />
+    <link rel="canonical" href={canonical} />
+    {languageLinks.map((item) => <link rel="alternate" hreflang={item.hreflang} href={item.absolute} />)}
+    <link rel="alternate" hreflang="x-default" href={`${siteUrl}/en/`} />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content={languages[lang].locale} />
+    <meta property="og:title" content={page.seo.ogTitle} />
+    <meta property="og:description" content={page.seo.ogDescription} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={`${siteUrl}/third_hero.webp`} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <link rel="icon" href="/Favicon_third_32.png" sizes="32x32" type="image/png" />
+    <link rel="apple-touch-icon" href="/Favicon_third_180.png" />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)}></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#highlights">{page.skip}</a>
+
+    <header class="site-header" id="siteHeader">
+      <a class="brand" href={`/${lang}/#top`} aria-label="third home">
+        <img class="logo-light" src="/logo.png" alt="third" />
+        <img class="logo-dark" src="/logo.png" alt="" aria-hidden="true" />
+      </a>
+
+      <nav class="desktop-nav" aria-label="Primary navigation">
+        <a class="draw-link" href="#highlights">{page.nav.highlights}</a>
+        <a class="draw-link" href="#cinematography">{page.nav.cinematography}</a>
+        <a class="draw-link" href="#production">{page.nav.production}</a>
+        <a class="draw-link" href="#commercial">{page.nav.publicity}</a>
+        <a class="draw-link nav-cta" data-whatsapp href="https://wa.link/hlicbf" target="_blank" rel="noopener">{page.nav.cta}</a>
+      </nav>
+
+      <div class="language-picker" id="languagePicker">
+        <button class="draw-link" type="button" id="languageToggle" aria-expanded="false" aria-controls="languageMenu" aria-label="Choose language">
+          <strong id="languageCurrent">{languages[lang].label}</strong>
+        </button>
+        <div class="language-menu" id="languageMenu" aria-hidden="true">
+          {languageLinks.map((item) => (
+            <a href={item.href} data-lang-link={item.code} class:list={{ "is-active": item.code === lang }}>{item.label}</a>
+          ))}
+        </div>
+      </div>
+
+      <button class="menu-toggle draw-link" id="menuToggle" type="button" aria-expanded="false" aria-controls="mobileMenu" aria-label="Open menu">
+        <span></span><span></span>
+      </button>
+    </header>
+
+    <aside class="mobile-menu" id="mobileMenu" aria-hidden="true">
+      <a href="#highlights">{page.nav.highlights}</a>
+      <a href="#cinematography">{page.nav.cinematography}</a>
+      <a href="#production">{page.nav.production}</a>
+      <a href="#commercial">{page.nav.publicity}</a>
+      <a href="#contact">{page.nav.contact}</a>
+      <a class="mobile-cta" data-whatsapp href="https://wa.link/hlicbf" target="_blank" rel="noopener">{page.nav.cta}</a>
+    </aside>
+
+    <main id="top">
+      <section class="hero" aria-labelledby="heroTitle">
+        <div class="hero-media" aria-hidden="true">
+          <img src="/third_hero.webp" alt="" />
+        </div>
+        <div class="hero-copy">
+          <h1 id="heroTitle" data-typed-hero>{page.hero.title}</h1>
+        </div>
+        <div class="hero-action">
+          <button class="draw-link showreel-link" type="button" data-video="https://youtu.be/7mruGzpZujc"><span aria-hidden="true">▶</span> {page.hero.secondary}</button>
+        </div>
+        <div class="ticker" aria-hidden="true">
+          <div>
+            {tickerLoop.map((item) => <span>{item}</span>)}
+          </div>
+        </div>
+      </section>
+
+      <section class="scene studio-scene scene-left" aria-label="Studio overview">
+        <div class="scene-shell">
+          <div class="scene-panel">
+            <div class="studio-index">
+              <article class="index-row index-lead reveal">
+                <span>01</span>
+                <div>
+                  <h2>{page.intro.title}</h2>
+                  <p>{page.intro.copy}</p>
+                </div>
+              </article>
+              {page.intro.rows.map((row) => (
+                <article class="index-row reveal"><span>{row.number}</span><strong>{row.title}</strong><em>{row.meta}</em></article>
+              ))}
+            </div>
+            <div class="studio-images" aria-label="Studio image notes">
+              {page.studioImages.map((image) => (
+                <figure class={image.className}><img src={image.src} alt={image.alt} loading="lazy" /></figure>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene highlights-scene scene-right" id="highlights" aria-labelledby="highlightsTitle">
+        <div class="scene-shell">
+          <div class="scene-panel">
+            <div class="section-heading reveal">
+              <span>{page.highlights.kicker}</span>
+              <h2 id="highlightsTitle" data-type-on-view>{page.highlights.title}</h2>
+            </div>
+            <div class="work-grid">
+              {page.highlights.items.map((item) => (
+                <article class={item.className} data-video={item.video}>
+                  <img src={item.src} alt={item.alt} loading="lazy" />
+                  <div><h3>{item.title}</h3></div>
+                </article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene cinema-scene scene-left" id="cinematography" aria-labelledby="cineTitle">
+        <div class="scene-shell">
+          <div class="scene-panel">
+            <div class="section-heading reveal">
+              <span>{page.cinema.kicker}</span>
+              <h2 id="cineTitle" data-type-on-view>{page.cinema.title}</h2>
+            </div>
+            <div class="rail">
+              {page.cinema.items.map((item) => (
+                <article class="rail-card reveal" data-video={item.video}><img src={item.src} alt={item.alt} loading="lazy" /><h3>{item.title}</h3></article>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene production-scene scene-right" id="production" aria-labelledby="prodTitle">
+        <div class="scene-shell">
+          <div class="scene-panel">
+            <div class="section-heading reveal">
+              <span>{page.production.kicker}</span>
+              <h2 id="prodTitle" data-type-on-view>{page.production.title}</h2>
+            </div>
+            <div class="production-grid">
+              {page.production.images.map((image) => <img class="reveal" src={image.src} alt={image.alt} loading="lazy" />)}
+              <p class="production-note reveal" aria-label={page.production.note}>
+                {page.production.noteLines.map((line) => <span>{line}</span>)}
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene publicity-scene scene-left" id="commercial" aria-labelledby="commTitle">
+        <div class="scene-shell">
+          <div class="scene-panel">
+            <div class="section-heading reveal">
+              <span>{page.publicity.kicker}</span>
+              <h2 id="commTitle" data-type-on-view>{page.publicity.title}</h2>
+            </div>
+            <div class="commercial-list">
+              {page.publicity.items.map((item, index) => (
+                <button class="list-row reveal" type="button" data-video={item.video}><span>{String(index + 1).padStart(2, "0")}</span><strong>{item.title}</strong><em>{item.meta}</em></button>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="scene contact-scene scene-right" id="contact" aria-labelledby="contactTitle">
+        <div class="scene-shell">
+          <div class="scene-panel contact-panel">
+            <div class="contact-copy reveal">
+              <span>{page.contact.kicker}</span>
+              <h2 id="contactTitle" data-type-on-view>{page.contact.title}</h2>
+              <p>{page.contact.copy}</p>
+            </div>
+            <div class="contact-actions reveal">
+              <a class="draw-link" data-whatsapp href="https://wa.link/hlicbf" target="_blank" rel="noopener">{page.contact.whatsapp}</a>
+              <a class="draw-link" href="mailto:info@3rdproductions.com">info@3rdproductions.com</a>
+              <p>{page.contact.meta.map((line) => <><span>{line}</span><br /></>)}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <a class="floating-whatsapp" data-whatsapp href="https://wa.link/hlicbf" target="_blank" rel="noopener" aria-label="Message Third on WhatsApp">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.5 3.5A11.8 11.8 0 0 0 12.1 0C5.6 0 .3 5.3.3 11.8c0 2.1.5 4.1 1.6 5.9L.2 23.8l6.3-1.7a11.8 11.8 0 0 0 5.6 1.4h.1c6.5 0 11.8-5.3 11.8-11.8 0-3.1-1.2-6.1-3.5-8.2ZM12.1 21.6a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.7-.2-.4a9.8 9.8 0 0 1-1.5-5.2c0-5.4 4.4-9.8 9.8-9.8 2.6 0 5.1 1 7 2.9a9.7 9.7 0 0 1 2.9 7c0 5.4-4.4 9.8-9.9 9.8Zm5.4-7.3c-.3-.2-1.8-.9-2-.9-.3-.1-.5-.2-.7.1-.2.3-.8 1-1 1.2-.2.2-.4.2-.7.1-.3-.2-1.2-.5-2.4-1.5-.9-.8-1.5-1.8-1.7-2.1-.2-.3 0-.5.1-.6l.5-.6.3-.5c.1-.2.1-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.5s1.1 2.9 1.2 3.1c.2.2 2.1 3.2 5.2 4.6.7.3 1.3.5 1.7.6.7.2 1.4.2 1.9.1.6-.1 1.8-.7 2-1.4.3-.7.3-1.3.2-1.4-.1-.1-.3-.2-.6-.4Z" /></svg>
+    </a>
+
+    <div class="video-modal" id="videoModal" aria-hidden="true" role="dialog" aria-label="Video player">
+      <button class="modal-close draw-link" id="modalClose" type="button" aria-label={page.modalClose}>{page.modalClose}</button>
+      <div class="modal-frame" id="modalFrame"></div>
+    </div>
+
+    <aside class="cookie-question" id="cookieQuestion" aria-label="Cookie preferences">
+      <div>
+        <strong>{page.cookies.title}</strong>
+        <p>{page.cookies.copy}</p>
+      </div>
+      <div class="cookie-actions">
+        <button type="button" data-cookie-choice="essential">{page.cookies.essential}</button>
+        <button type="button" data-cookie-choice="optional">{page.cookies.optional}</button>
+      </div>
+    </aside>
+
+    <script type="application/json" id="third-page-data" set:html={JSON.stringify(pageData)}></script>
+    <script src="/JS/main.js" defer></script>
+  </body>
+</html>
+
