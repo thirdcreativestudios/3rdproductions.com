@@ -1049,17 +1049,18 @@ body.menu-open .site-header {
   .highlights-scene .section-heading,
   .cinema-scene .section-heading {
     grid-template-columns: 1fr;
-    gap: clamp(16px, 5vw, 28px);
+    gap: clamp(12px, 4vw, 22px);
+    position: relative;
+    padding-top: clamp(64px, 18vw, 96px);
   }
   .highlights-scene .section-heading-main,
   .cinema-scene .section-heading-main {
-    position: relative;
     display: block;
-    padding-top: clamp(58px, 16vw, 88px);
+    padding-top: 0;
   }
   .section-heading-main .section-showreel {
     position: absolute;
-    top: clamp(4px, 2vw, 12px);
+    top: clamp(8px, 3vw, 16px);
     right: clamp(48px, 17vw, 104px);
     margin: 0;
   }
