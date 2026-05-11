@@ -301,6 +301,14 @@ h1::after,
   font-size: .85em;
   transform: translateY(-.03em);
 }
+.section-showreel {
+  width: max-content;
+  max-width: 100%;
+  color: inherit;
+}
+.section-showreel-mobile {
+  display: none;
+}
 .ticker {
   position: absolute;
   left: 0;
@@ -351,6 +359,11 @@ body.js-ready .scene-right:not(.scene-active) .scene-panel { transform: translat
 .studio-scene { background: var(--cream); }
 .highlights-scene { background: var(--paper); }
 .cinema-scene { background: var(--mist); }
+.highlights-scene .scene-shell,
+.cinema-scene .scene-shell {
+  padding-top: clamp(64px, 6vw, 86px);
+  padding-bottom: clamp(86px, 8vw, 116px);
+}
 .production-scene { background: var(--stone); }
 .publicity-scene { background: #f8f5ec; }
 .publicity-scene .section-heading {
@@ -406,6 +419,9 @@ body.js-ready .scene-right:not(.scene-active) .scene-panel { transform: translat
   font-weight: 560;
   letter-spacing: 0;
 }
+.keep-together {
+  white-space: nowrap;
+}
 .index-lead p {
   max-width: 560px;
   margin: 22px 0 0;
@@ -424,6 +440,9 @@ body.js-ready .scene-right:not(.scene-active) .scene-panel { transform: translat
   font-style: normal;
   line-height: 1.3;
   text-align: right;
+}
+.nowrap-note {
+  white-space: nowrap;
 }
 .index-row > span,
 .list-row > span {
@@ -493,6 +512,16 @@ body.js-ready .scene-right:not(.scene-active) .scene-panel { transform: translat
   gap: clamp(18px, 5vw, 70px);
   align-items: start;
   margin-bottom: clamp(22px, 3.4vw, 42px);
+}
+.section-heading-main {
+  min-width: 0;
+  display: grid;
+  gap: clamp(14px, 1.8vw, 24px);
+  justify-items: start;
+}
+.section-heading-main .section-showreel-desktop {
+  justify-self: end;
+  margin-right: clamp(0px, 2vw, 28px);
 }
 .section-heading h2 {
   min-height: 1.45em;
@@ -872,6 +901,10 @@ body.menu-open .site-header {
     position: relative;
     min-height: 100svh;
   }
+  .highlights-scene .scene-shell,
+  .cinema-scene .scene-shell {
+    padding: 86px 14px 36px;
+  }
   body.js-ready .scene:not(.scene-active) .scene-panel {
     opacity: 1;
     transform: none;
@@ -1016,6 +1049,13 @@ body.menu-open .site-header {
     margin-left: 0;
   }
   .scene-shell { padding: 86px 14px 36px; }
+  .section-showreel-desktop {
+    display: none;
+  }
+  .section-showreel-mobile {
+    display: flex;
+    margin: clamp(26px, 7vw, 42px) auto 0;
+  }
   .index-row {
     grid-template-columns: 1fr;
   }
