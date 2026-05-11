@@ -1053,12 +1053,15 @@ body.menu-open .site-header {
   }
   .highlights-scene .section-heading-main,
   .cinema-scene .section-heading-main {
-    display: flex;
-    flex-direction: column;
+    position: relative;
+    display: block;
+    padding-top: clamp(58px, 16vw, 88px);
   }
   .section-heading-main .section-showreel {
-    align-self: flex-end;
-    margin: clamp(-24px, -5vw, -12px) clamp(54px, 18vw, 112px) clamp(22px, 6vw, 34px) 0;
+    position: absolute;
+    top: clamp(4px, 2vw, 12px);
+    right: clamp(48px, 17vw, 104px);
+    margin: 0;
   }
   .index-row {
     grid-template-columns: 1fr;
