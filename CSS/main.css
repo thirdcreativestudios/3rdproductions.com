@@ -1046,9 +1046,19 @@ body.menu-open .site-header {
     margin-left: 0;
   }
   .scene-shell { padding: 86px 14px 36px; }
+  .highlights-scene .section-heading,
+  .cinema-scene .section-heading {
+    grid-template-columns: 1fr;
+    gap: clamp(16px, 5vw, 28px);
+  }
+  .highlights-scene .section-heading-main,
+  .cinema-scene .section-heading-main {
+    display: flex;
+    flex-direction: column;
+  }
   .section-heading-main .section-showreel {
-    justify-self: end;
-    margin: 0 clamp(30px, 14vw, 86px) clamp(18px, 5vw, 30px) 0;
+    align-self: flex-end;
+    margin: clamp(-24px, -5vw, -12px) clamp(54px, 18vw, 112px) clamp(22px, 6vw, 34px) 0;
   }
   .index-row {
     grid-template-columns: 1fr;
